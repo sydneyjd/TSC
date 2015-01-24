@@ -20,6 +20,7 @@
 #include "../core/global_game.hpp"
 #include "../core/math/rect.hpp"
 #include "../video/video.hpp"
+#include "../video/img_set.hpp"
 #include "../core/collision.hpp"
 #include "../scripting/scriptable_object.hpp"
 #include "../scripting/scripting.hpp"
@@ -127,7 +128,7 @@ namespace TSC {
 
     /* *** *** *** *** *** *** *** cSprite *** *** *** *** *** *** *** *** *** *** */
 
-    class cSprite : public cCollidingSprite {
+    class cSprite : public cCollidingSprite, public cImageSet {
     public:
         // constructor
         cSprite(cSprite_Manager* sprite_manager, const std::string type_name = "sprite");
@@ -158,74 +159,21 @@ namespace TSC {
 
         /// Sets the image for drawing
         virtual void Set_Image(cGL_Surface* new_image, bool new_start_image = 0, bool del_img = 0);
+        virtual void Set_Image_Set_Image(cGL_Surface* new_image, bool new_startimage /* = 0 */)
+        {
+            Set_Image(new_image, new_startimage, 0);
+        }
+
+        // Identity reported by image set
+        virtual std::string Get_Identity()
+        {
+            std::stringstream ss;
+            ss << "sprite type " << m_type << ", name " << m_name.c_str();
+            return ss.str();
+        }
 
         // Set the sprite type
         void Set_Sprite_Type(SpriteType type);
-
-        /* Add an image to the animation
-         * NULL image is allowed
-         * time: if not set uses the default display time
-        */
-        void Add_Image(cGL_Surface* image, Uint32 time = 0);
-
-        // Add an image set
-        bool Add_Image_Set(const std::string& name, boost::filesystem::path path, Uint32 time = 0, int* start_num = NULL, int* end_num = NULL);
-
-        // Set an active image set
-        bool Set_Image_Set(const std::string& name, const bool new_startimage = 0);
-
-        // Set the animation start and end image
-        inline void Set_Animation_Image_Range(const int start, const int end)
-        {
-            m_anim_img_start = start;
-            m_anim_img_end = end;
-        };
-        /* Set the image using the given array number
-         * if new_start_image is set the default start_image will be set to the given image
-         * if del_img is set the given image will be deleted
-        */
-        virtual void Set_Image_Num(const int num, const bool new_startimage = 0, const bool del_img = 0);
-        // Get an array image
-        cGL_Surface* Get_Image(const unsigned int num) const;
-        // Clear the image list
-        void Clear_Images(void);
-
-        /* Set if the animation is enabled
-         * default : disabled
-        */
-        inline void Set_Animation(const bool enabled = 0)
-        {
-            m_anim_enabled = enabled;
-        };
-        // Reset animation back to the first image
-        inline void Reset_Animation(void)
-        {
-            m_anim_counter = 0;
-        };
-
-        // update animation
-        void Update_Animation(void);
-
-        // Set default image display time
-        inline void Set_Default_Time(const Uint32 time = 1000)
-        {
-            m_anim_time_default = time;
-        };
-        /* Set display time for all images
-         * default_time: if set also make it the default time
-        */
-        void Set_Time_All(const Uint32 time, const bool default_time = 0);
-        /* Set the animation speed modifier
-         * 1.0 is the normal speed
-        */
-        inline void Set_Animation_Speed(const float anim_mod)
-        {
-            m_anim_mod = anim_mod;
-
-            if (m_anim_mod < 0.0f) {
-                m_anim_mod = 0.0f;
-            }
-        };
 
         /* Set if the camera should be ignored
          * default : disabled
