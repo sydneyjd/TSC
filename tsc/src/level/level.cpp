@@ -109,7 +109,7 @@ cLevel::cLevel(void)
     m_animation_manager = new cAnimation_Manager();
 
     // add default gradient layer
-    cBackground* gradient_background = new cBackground(m_background_manager);
+    cBackground* gradient_background = new cBackground(m_sprite_manager);
     gradient_background->Set_Type(BG_GR_VER);
     gradient_background->m_pos_z = 0.0001f;
     m_background_manager->Add(gradient_background);
@@ -245,7 +245,7 @@ void cLevel::Unload(bool delayed /* = 0 */)
     m_background_manager->Delete_All();
 
     // add default gradient layer
-    cBackground* gradient_background = new cBackground(m_background_manager);
+    cBackground* gradient_background = new cBackground(m_sprite_manager);
     gradient_background->Set_Type(BG_GR_VER);
     gradient_background->m_pos_z = 0.0001f;
     m_background_manager->Add(gradient_background);

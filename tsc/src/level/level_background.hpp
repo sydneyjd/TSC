@@ -19,9 +19,8 @@
 
 #include "../core/global_basic.hpp"
 #include "../video/video.hpp"
+#include "../video/img_set.hpp"
 #include "../core/obj_manager.hpp"
-#include "../core/sprite_manager.hpp"
-#include "../objects/sprite.hpp"
 
 namespace TSC {
 
@@ -38,13 +37,12 @@ namespace TSC {
 
     /* *** *** *** *** *** *** *** Background class *** *** *** *** *** *** *** *** *** *** */
 
-    class cBackground_Manager;
-    class cBackground {
+    class cBackground : public cImageSet{
     public:
         // default constructor
-        cBackground(cBackground_Manager* background_manager);
+        cBackground(cSprite_Manager* sprite_manager);
         // create from stream
-        cBackground(XmlAttributes& attributes, cBackground_Manager* background_manager);
+        cBackground(XmlAttributes& attributes, cSprite_Manager* sprite_manager);
         // destructor
         ~cBackground(void);
 
@@ -73,6 +71,9 @@ namespace TSC {
         void Set_Pos_Z(const float val);
         // Set the Background image
         void Set_Image(const boost::filesystem::path& img_file_1);
+        virtual void Set_Image_Set_Image(cGL_Surface* new_image, bool new_imagestart = 0) {
+            m_image_1 = new_image;
+        }
         // Set the Background Image scrolling speed
         void Set_Scroll_Speed(const float x = 1.0f, const float y = 1.0f);
 
@@ -106,7 +107,7 @@ namespace TSC {
 
         // - background image settings
         // image
-        cSprite* m_sprite;
+        cGL_Surface* m_image_1;
         // image filename
         boost::filesystem::path m_image_1_filename;
         // scrolling speed
@@ -128,8 +129,6 @@ namespace TSC {
     public:
         cBackground_Manager(void);
         virtual ~cBackground_Manager(void);
-
-        cSprite_Manager* m_sprite_manager;
     };
 
     /* *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** */

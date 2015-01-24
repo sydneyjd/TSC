@@ -224,7 +224,7 @@ void cLevelLoader::Parse_Tag_Background()
     if (bg_type == BG_GR_HOR || bg_type == BG_GR_VER)
         mp_level->m_background_manager->Get_Pointer(0)->Load_From_Attributes(m_current_properties);
     else // default background
-        mp_level->m_background_manager->Add(new cBackground(m_current_properties, mp_level->m_background_manager));
+        mp_level->m_background_manager->Add(new cBackground(m_current_properties, mp_level->m_sprite_manager));
 }
 
 void cLevelLoader::Parse_Tag_Player()

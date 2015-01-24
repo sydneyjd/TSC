@@ -299,56 +299,6 @@ void cCollidingSprite::Handle_Collision(cObjectCollision* collision)
     }
 }
 
-/* *** *** *** *** *** *** *** cAnimation_Parser *** *** *** *** *** *** *** *** *** *** */
-class cAnimation_Parser : public cFile_parser
-{
-public:
-    typedef std::pair<std::string, Uint32> Entry_Type;
-    typedef std::vector<Entry_Type> List_Type;
-
-    cAnimation_Parser(Uint32 time) : m_time(time)
-    {
-    }
-
-    bool HandleMessage(const std::string* parts, unsigned int count, unsigned int line)
-    {
-        if(count == 1) {
-            // only a filename
-            m_images.push_back(Entry_Type(parts[0], m_time));
-        }
-        else if(count == 2) {
-            if(parts[0] == "time") {
-                // Setting default time for images
-                m_time = string_to_int(parts[1]);
-            }
-            else {
-                // filename and a time for that specific image
-                m_images.push_back(Entry_Type(parts[0], string_to_int(parts[1])));
-            }
-        }
-
-        return 1;
-    }
-
-
-    List_Type m_images;
-    Uint32 m_time;
-};
-
-/* *** *** *** *** *** *** *** cAnimation_Surface *** *** *** *** *** *** *** *** *** *** */
-
-cAnimation_Surface::cAnimation_Surface(void)
-{
-    m_image = NULL;
-    m_time = 0;
-}
-
-cAnimation_Surface::~cAnimation_Surface(void)
-{
-    //
-}
-
-
 /* *** *** *** *** *** *** *** cSprite *** *** *** *** *** *** *** *** *** *** */
 
 const float cSprite::m_pos_z_passive_start = 0.01f;

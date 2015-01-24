@@ -197,6 +197,9 @@ void cImageSet::Set_Image_Num(const int num, bool new_startimage /* = 0 */)
     m_curr_img = num;
 
     if (m_curr_img < 0) {
+        // BUG: Setting m_image to NULL may crash if code direclty access m_image such as m_image->m_w
+        // This may happen if a loaded image set does not exist but the code still calls Set_Image_Set
+        // then tries to acces m_image. Perhaps this should set some type of blank image instead.
         Set_Image_Set_Image(NULL, new_startimage);
     }
     else if (m_curr_img < static_cast<int>(m_images.size())) {

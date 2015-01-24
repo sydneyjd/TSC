@@ -112,20 +112,6 @@ namespace TSC {
         cObjectCollision_List m_collisions;
     };
 
-    /* *** *** *** *** *** *** *** cAnimation_Surface *** *** *** *** *** *** *** *** *** *** */
-
-    class cAnimation_Surface {
-    public:
-        cAnimation_Surface(void);
-        ~cAnimation_Surface(void);
-
-        // the image
-        cGL_Surface* m_image;
-        // time to display in milliseconds
-        Uint32 m_time;
-    };
-
-
     /* *** *** *** *** *** *** *** cSprite *** *** *** *** *** *** *** *** *** *** */
 
     class cSprite : public cCollidingSprite, public cImageSet {
@@ -470,31 +456,6 @@ namespace TSC {
         cGL_Surface* m_start_image;
         /// image filename
         std::string m_image_filename;
-
-        // currently set image array number
-        int m_curr_img;
-        // if animation is enabled
-        bool m_anim_enabled;
-        // animation start image
-        int m_anim_img_start;
-        // animation end image
-        int m_anim_img_end;
-        // default animation time
-        Uint32 m_anim_time_default;
-        // animation counter
-        Uint32 m_anim_counter;
-        Uint32 m_anim_last_ticks;
-        // animation speed modifier
-        float m_anim_mod;
-
-        // Surface list
-        typedef vector<cAnimation_Surface> cAnimation_Surface_List;
-        cAnimation_Surface_List m_images;
-
-        // Animation names
-        typedef std::map<std::string, std::pair<int, int> > cAnimation_Name_Map;
-        cAnimation_Name_Map m_named_ranges;
-
 
         /// complete image rect
         GL_rect m_rect;

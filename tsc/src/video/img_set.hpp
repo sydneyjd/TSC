@@ -59,7 +59,7 @@ namespace TSC {
         // constructor
         cImageSet();
         // destructor
-        ~cImageSet(void);
+        virtual ~cImageSet(void);
 
         /* Add an image to the animation
          * NULL image is allowed
