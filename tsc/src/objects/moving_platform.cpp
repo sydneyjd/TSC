@@ -137,6 +137,7 @@ void cMoving_Platform::Init(void)
 
     Set_Middle_Count(4);
     // create default images
+    Clear_Images();
     Add_Image(pVideo->Get_Package_Surface("ground/green_1/slider/1/brown/left.png"));
     Add_Image(pVideo->Get_Package_Surface("ground/green_1/slider/1/brown/middle.png"));
     Add_Image(pVideo->Get_Package_Surface("ground/green_1/slider/1/brown/right.png"));
