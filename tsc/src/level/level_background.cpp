@@ -34,22 +34,25 @@ namespace TSC {
 
 /* *** *** *** *** *** *** *** cBackground *** *** *** *** *** *** *** *** *** *** */
 
-cBackground::cBackground(cSprite_Manager* sprite_manager)
+cBackground::cBackground(cBackground_Manager* background_manager)
 {
     cBackground::Init();
-    cBackground::Set_Sprite_Manager(sprite_manager);
+    cBackground::Set_Sprite_Manager(background_manager->m_sprite_manager);
 }
 
-cBackground::cBackground(XmlAttributes& attributes, cSprite_Manager* sprite_manager)
+cBackground::cBackground(XmlAttributes& attributes, cBackground_Manager *background_manager)
 {
     cBackground::Init();
-    cBackground::Set_Sprite_Manager(sprite_manager);
+    cBackground::Set_Sprite_Manager(background_manager->m_sprite_manager);
     cBackground::Load_From_Attributes(attributes);
 }
 
 cBackground::~cBackground(void)
 {
-    //
+    if(m_sprite) {
+        delete m_sprite;
+        m_sprite = NULL;
+    }
 }
 
 void cBackground::Init(void)
@@ -66,7 +69,7 @@ void cBackground::Init(void)
     m_color_1 = static_cast<Uint8>(0);
     m_color_2 = static_cast<Uint8>(0);
 
-    m_image_1 = NULL;
+    m_sprite = NULL;
 
     m_speed_x = 0.5f;
     m_speed_y = 0.5f;
@@ -192,9 +195,14 @@ void cBackground::Set_Image(const fs::path& img_file_1)
 {
     m_image_1_filename = img_file_1;
 
+    // Delete old image
+    if(m_sprite) {
+        delete m_sprite;
+        m_sprite = NULL;
+    }
+
     // empty
     if (m_image_1_filename.empty()) {
-        m_image_1 = NULL;
         return;
     }
 
@@ -202,7 +210,9 @@ void cBackground::Set_Image(const fs::path& img_file_1)
     if (m_image_1_filename.is_absolute())
         m_image_1_filename = pPackage_Manager->Get_Relative_Pixmap_Path(m_image_1_filename);
 
-    m_image_1 = pVideo->Get_Package_Surface(m_image_1_filename);
+    m_sprite = new cSprite(m_sprite_manager);
+    m_sprite->Add_Image_Set("main", m_image_1_filename);
+    m_sprite->Set_Image_Set("main", true);
 }
 
 void cBackground::Set_Scroll_Speed(const float x /* = 1.0f */, const float y /* = 1.0f */)
@@ -241,6 +251,10 @@ void cBackground::Set_Const_Velocity_Y(const float vel)
 
 void cBackground::Update(void)
 {
+    if(m_sprite) {
+        m_sprite->Update_Animation();
+    }
+
     if (!Is_Float_Equal(m_const_vel_x, 0.0f)) {
         m_pos_x += (m_const_vel_x * 2) * pFramerate->m_speed_factor;
     }
@@ -259,7 +273,7 @@ void cBackground::Draw(void)
     // image
     else if (m_type == BG_IMG_BOTTOM || m_type == BG_IMG_TOP || m_type == BG_IMG_ALL) {
         // if background images are disabled or no image
-        if (!pPreferences->m_level_background_images || !m_image_1) {
+        if (!pPreferences->m_level_background_images || !m_sprite || !m_sprite->m_image) {
             return;
         }
 
@@ -268,49 +282,49 @@ void cBackground::Draw(void)
         float posy_final = m_pos_y - (((pActive_Camera->m_y + game_res_h) * 0.3f) * m_speed_y);
 
         if (m_type == BG_IMG_BOTTOM || m_type == BG_IMG_ALL) {
-            posy_final += game_res_h - m_image_1->m_h;
+            posy_final += game_res_h - m_sprite->m_image->m_h;
         }
 
         // align start position x
         // to left
         while (posx_final > 0.0f) {
-            posx_final -= m_image_1->m_w;
+            posx_final -= m_sprite->m_image->m_w;
         }
         // to right
-        while (posx_final < -m_image_1->m_w) {
-            posx_final += m_image_1->m_w;
+        while (posx_final < -m_sprite->m_image->m_w) {
+            posx_final += m_sprite->m_image->m_w;
         }
         // align start position y
         if (m_type == BG_IMG_ALL) {
             // to top
             while (posy_final > 0.0f) {
-                posy_final -= m_image_1->m_h;
+                posy_final -= m_sprite->m_image->m_h;
             }
             // to bottom
-            while (posy_final < -m_image_1->m_h) {
-                posy_final += m_image_1->m_h;
+            while (posy_final < -m_sprite->m_image->m_h) {
+                posy_final += m_sprite->m_image->m_h;
             }
         }
 
         // draw until width is filled
         while (posx_final < game_res_w) {
             // draw horizontal
-            m_image_1->Blit(posx_final, posy_final, m_pos_z);
+            m_sprite->m_image->Blit(posx_final, posy_final, m_pos_z);
 
             // draw vertical
             if (m_type == BG_IMG_ALL) {
                 float posy_temp = posy_final;
 
                 // draw until height is filled
-                while (posy_temp < game_res_h - m_image_1->m_h) {
+                while (posy_temp < game_res_h - m_sprite->m_image->m_h) {
                     // change position first as this position y is already drawn
-                    posy_temp += m_image_1->m_h;
+                    posy_temp += m_sprite->m_image->m_h;
 
-                    m_image_1->Blit(posx_final, posy_temp, m_pos_z);
+                    m_sprite->m_image->Blit(posx_final, posy_temp, m_pos_z);
                 }
             }
 
-            posx_final += m_image_1->m_w;
+            posx_final += m_sprite->m_image->m_w;
         }
     }
 }
@@ -380,12 +394,14 @@ std::string cBackground::Get_Type_Name(const BackgroundType type)
 cBackground_Manager::cBackground_Manager(void)
     : cObject_Manager<cBackground>()
 {
-    //
+    // create a dummy sprite manager, though we never add items to this manager
+    m_sprite_manager = new cSprite_Manager();
 }
 
 cBackground_Manager::~cBackground_Manager(void)
 {
     cBackground_Manager::Delete_All();
+    delete m_sprite_manager;
 }
 
 /* *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** */

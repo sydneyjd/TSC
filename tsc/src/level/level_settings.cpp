@@ -367,7 +367,7 @@ void cLevel_Settings::Set_Sprite_Manager(cSprite_Manager* sprite_manager)
 
 bool cLevel_Settings::Add_Background_Image(const CEGUI::EventArgs& event)
 {
-    cBackground* background = new cBackground(m_level->m_sprite_manager);
+    cBackground* background = new cBackground(m_level->m_background_manager);
     background->Set_Type(BG_IMG_BOTTOM);
     background->Set_Image(LEVEL_DEFAULT_BACKGROUND);
 
