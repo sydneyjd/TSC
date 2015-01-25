@@ -244,6 +244,8 @@ void cBackground::Set_Const_Velocity_Y(const float vel)
 
 void cBackground::Update(void)
 {
+    Update_Animation();
+
     if (!Is_Float_Equal(m_const_vel_x, 0.0f)) {
         m_pos_x += (m_const_vel_x * 2) * pFramerate->m_speed_factor;
     }
