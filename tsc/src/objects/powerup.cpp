@@ -303,7 +303,7 @@ void cMushroom::Set_Type(SpriteType new_type)
     }
 
     m_type = new_type;
-    Set_Image_Set("main");
+    Set_Image_Set("main", 1);
 }
 
 void cMushroom::Activate(void)
@@ -502,7 +502,7 @@ void cFirePlant::Init(void)
 
     Clear_Images();
     Add_Image_Set("main", "game/items/berry_fire.imgset");
-    Set_Image_Set("main");
+    Set_Image_Set("main", 1);
 
     m_name = _("Fireberry");
 
@@ -606,7 +606,7 @@ void cMoon::Init(void)
 
     Clear_Images();
     Add_Image_Set("main", "game/items/moon.imgset");
-    Set_Image_Set("main");
+    Set_Image_Set("main", 1);
 
     m_name = _("Moon (3-UP)");
     m_particle_counter = 0.0f;
