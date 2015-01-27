@@ -811,7 +811,8 @@ void cMoving_Platform::Update_Rect(void)
 
     // get width and height
     if (m_left_image.m_image) {
-        m_rect.m_w += m_left_image.m_image->m_w;
+        // don't add left of collision rectangle
+        m_rect.m_w += (m_left_image.m_image->m_w - m_left_image.m_image->m_col_pos.m_x);
         m_rect.m_h = m_left_image.m_image->m_h;
     }
     if (m_middle_image.m_image) {
@@ -821,7 +822,8 @@ void cMoving_Platform::Update_Rect(void)
         }
     }
     if (m_right_image.m_image) {
-        m_rect.m_w += m_right_image.m_image->m_w;
+        // don't add right of collision rectangle
+        m_rect.m_w += (m_right_image.m_image->m_col_pos.m_x + m_right_image.m_image->m_col_w);
         if(m_right_image.m_image->m_h > m_rect.m_h) {
             m_rect.m_h = m_right_image.m_image->m_h;
         }
